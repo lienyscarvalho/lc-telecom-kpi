@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LC Consultoria — TelecomKPI Manager Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#d4af37;--gold-light:#f5e070;--gold-dark:#9a7d0a;
+  --navy:#1a3a6b;--navy-mid:#2e5fa0;--navy-deep:#0b1932;
+  --obsidian:#0a0a0a;--obs2:#111;--obs3:#161616;
+  --r:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--obsidian);color:#f0f0f0;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+
+/* VIEWS */
+.view{display:none;animation:fadeIn .4s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* GOLD TEXT */
+.gold{background:linear-gradient(135deg,#f5e070,#d4af37 45%,#9a7d0a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gold-shimmer{background:linear-gradient(90deg,#9a7d0a,#f5e070,#d4af37,#f5e070,#9a7d0a);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+@keyframes shimmer{from{background-position:200% center}to{background-position:-200% center}}
+
+/* GLASS */
+.glass{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);backdrop-filter:blur(20px)}
+.glass:hover{border-color:rgba(212,175,55,.35)}
+
+/* BUTTONS */
+.btn-gold{background:linear-gradient(135deg,#d4af37,#f5e070 45%,#9a7d0a);color:#000;font-weight:700;letter-spacing:.07em;border:none;cursor:pointer;transition:all .3s;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden}
+.btn-gold:hover{box-shadow:0 8px 28px rgba(212,175,55,.45);transform:translateY(-2px)}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold);font-weight:600;cursor:pointer;transition:all .3s;font-family:'DM Sans',sans-serif}
+.btn-outline:hover{background:rgba(212,175,55,.1);box-shadow:0 0 18px rgba(212,175,55,.2)}
+
+/* GRID BG */
+.grid-bg{background-image:linear-gradient(rgba(212,175,55,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.025) 1px,transparent 1px);background-size:56px 56px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:all .4s;padding:18px 0}
+nav.scrolled{background:rgba(5,5,5,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,.1);padding:12px 0}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--navy-deep),var(--navy));border:1px solid rgba(212,175,55,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:13px}
+.logo-text p:first-child{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;letter-spacing:.2em}
+.logo-text p:last-child{font-size:8px;color:#5a7ab8;letter-spacing:.25em;text-transform:uppercase}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:11px;color:#888;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-ctas{display:flex;gap:10px}
+.nav-ctas button{padding:9px 20px;border-radius:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding-top:80px}
+.hero-glow1{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:rgba(46,95,160,.08);filter:blur(100px);border-radius:50%;pointer-events:none}
+.hero-glow2{position:absolute;top:60%;left:20%;width:280px;height:280px;background:rgba(212,175,55,.04);filter:blur(70px);border-radius:50%;pointer-events:none}
+.hero-content{max-width:900px;margin:0 auto;padding:0 32px;text-align:center;position:relative;z-index:2}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);border-radius:100px;padding:7px 16px;font-size:10px;color:#c8a840;letter-spacing:.25em;text-transform:uppercase;margin-bottom:32px;animation:fadeIn .8s ease both}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,7vw,76px);line-height:1.05;font-weight:900;margin-bottom:22px;animation:fadeUp .8s .2s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.hero-sub{color:#888;font-size:clamp(14px,2vw,18px);max-width:580px;margin:0 auto 36px;line-height:1.7;animation:fadeUp .8s .4s ease both}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;animation:fadeUp .8s .6s ease both}
+.hero-ctas button{padding:16px 36px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.trust-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:48px;animation:fadeUp .8s .8s ease both}
+.trust-badge{font-size:11px;color:#555;display:flex;align-items:center;gap:6px}
+.trust-badge svg{color:var(--gold)}
+
+/* MOCKUP */
+.mockup-wrap{margin-top:60px;position:relative;max-width:960px;margin-left:auto;margin-right:auto;animation:fadeUp .8s 1s ease both}
+.mockup-glow{position:absolute;inset:-20px;background:rgba(212,175,55,.04);filter:blur(40px);border-radius:24px;z-index:-1}
+.browser{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:16px;overflow:hidden}
+.browser-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
+.browser-dots span{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
+.url-bar{flex:1;background:rgba(255,255,255,.05);border-radius:6px;padding:5px 14px;font-size:11px;color:#555;text-align:center;font-family:'JetBrains Mono',monospace}
+.dash-grid{padding:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.kpi-trend{font-size:9px;padding:3px 7px;border-radius:100px;background:rgba(52,211,153,.1);color:#34d399}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;margin-bottom:4px}
+.kpi-lbl{font-size:9px;color:#555}
+.dash-bottom{padding:0 20px 20px;display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.chart-card,.alert-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px}
+.chart-lbl{font-size:10px;color:#666;margin-bottom:10px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:60px}
+.bar{flex:1;background:linear-gradient(to top,rgba(46,95,160,.8),rgba(52,144,220,.4));border-radius:2px;transition:height .3s}
+.alert-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+
+/* SECTION COMMON */
+section{padding:100px 0}
+.section-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.sec-label{font-size:10px;color:var(--gold);letter-spacing:.3em;text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:700;line-height:1.1;margin-bottom:16px}
+.sec-sub{color:#777;font-size:15px;line-height:1.7;max-width:520px}
+
+/* STATS */
+.stats-bar{padding:60px 0;border-top:1px solid rgba(212,175,55,.08);border-bottom:1px solid rgba(212,175,55,.08);background:#0d0d0d}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat-val{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;margin-bottom:4px}
+.stat-lbl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.2em}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.feat-card{padding:28px;border-radius:18px;transition:all .3s;cursor:default}
+.feat-icon{width:48px;height:48px;border-radius:12px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px}
+.feat-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin-bottom:8px}
+.feat-desc{font-size:13px;color:#777;line-height:1.65}
+
+/* MODULES */
+.mods-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.mod-card{padding:22px;border-radius:16px;transition:all .3s;cursor:default}
+.mod-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}
+.mod-name{font-weight:600;font-size:14px;margin-bottom:5px}
+.mod-desc{font-size:11px;color:#666;line-height:1.5}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;align-items:stretch}
+.plan{padding:32px;border-radius:20px;display:flex;flex-direction:column}
+.plan-highlighted{background:linear-gradient(160deg,#0d1a2e,#0b1932);border:2px solid var(--gold)!important;box-shadow:0 0 60px rgba(212,175,55,.15);position:relative}
+.popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#d4af37,#f5e070);color:#000;font-size:10px;font-weight:700;padding:5px 16px;border-radius:100px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.plan-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.plan-desc{font-size:12px;color:#666;margin-bottom:22px}
+.plan-price{display:flex;align-items:flex-end;gap:4px;margin-bottom:28px}
+.plan-currency{font-size:14px;color:#888;margin-bottom:6px}
+.plan-amount{font-family:'Playfair Display',serif;font-size:42px;font-weight:700}
+.plan-period{font-size:13px;color:#666;margin-bottom:6px}
+.plan-features{flex:1;margin-bottom:28px}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13px;color:#ccc}
+.plan-feature::before{content:"✓";color:var(--gold);font-size:12px;flex-shrink:0;margin-top:1px}
+.plan-cta{display:block;width:100%;padding:14px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.testi-card{padding:28px;border-radius:18px}
+.stars{display:flex;gap:3px;margin-bottom:16px}
+.star{color:var(--gold);font-size:13px}
+.testi-text{font-size:13px;color:#aaa;line-height:1.7;margin-bottom:20px;font-style:italic}
+.testi-name{font-weight:600;font-size:14px}
+.testi-role{font-size:11px;color:#555;margin-top:2px}
+
+/* CTA BANNER */
+.cta-banner{padding:80px 0;background:linear-gradient(135deg,#0b1932,#102244,#0b1932);position:relative;overflow:hidden;text-align:center}
+.cta-banner::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.02) 1px,transparent 1px);background-size:56px 56px}
+.cta-inner{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:0 32px}
+.cta-inner h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:700;margin-bottom:14px}
+.cta-inner p{color:#888;margin-bottom:32px;font-size:15px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-btns button{padding:16px 36px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:56px}
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.15em;margin-bottom:7px}
+.form-field input,.form-field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s}
+.form-field input:focus,.form-field textarea:focus{border-color:rgba(212,175,55,.4)}
+.form-field textarea{resize:none;height:110px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.contact-info-card{padding:22px;border-radius:16px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.ci-icon{width:42px;height:42px;border-radius:10px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ci-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em}
+.ci-val{font-size:13px;color:#ddd;margin-top:2px;font-weight:500}
+
+/* FOOTER */
+footer{padding:48px 0 28px;border-top:1px solid rgba(212,175,55,.08);background:#050505}
+.footer-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px}
+.footer-brand p:first-child{font-size:13px;color:#555;line-height:1.6;margin-top:12px}
+.footer-col h4{font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:#fff;margin-bottom:14px}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:8px}
+.footer-col a{font-size:12px;color:#555;text-decoration:none;transition:color .2s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:22px;border-top:1px solid rgba(255,255,255,.04);font-size:11px;color:#444}
+.status{display:flex;align-items:center;gap:6px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#34d399;animation:pulse 2s infinite}
+
+/* LOGIN PAGE */
+.login-wrap{min-height:100vh;display:flex}
+.login-left{flex:0 0 55%;background:linear-gradient(135deg,var(--navy-deep),#0d1a2e,var(--obsidian));position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:48px}
+.login-left::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.025) 1px,transparent 1px);background-size:56px 56px}
+.login-left-glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:rgba(46,95,160,.1);filter:blur(80px);border-radius:50%}
+.login-left-content{position:relative;z-index:2}
+.login-left h1{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,44px);font-weight:700;line-height:1.15;margin:24px 0 16px}
+.login-left p{color:#777;font-size:14px;line-height:1.65;max-width:380px}
+.login-features{margin-top:32px;display:flex;flex-direction:column;gap:12px}
+.lf-item{display:flex;align-items:center;gap:12px;font-size:13px;color:#bbb}
+.lf-check{width:20px;height:20px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0}
+.login-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;max-width:280px}
+.lkpi{padding:14px 16px;border-radius:14px}
+.lkpi-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;margin-bottom:3px}
+.lkpi-lbl{font-size:10px;color:#555}
+.login-right{flex:1;background:#070707;display:flex;align-items:center;justify-content:center;padding:40px 48px;position:relative}
+.login-right::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,58,107,.05),transparent);pointer-events:none}
+.login-form-wrap{width:100%;max-width:400px;position:relative;z-index:2}
+.tab-switcher{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:4px;margin-bottom:32px}
+.tab-btn{flex:1;padding:10px;border-radius:9px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .25s;color:#666}
+.tab-btn.active{background:linear-gradient(135deg,#d4af37,#f5e070 45%,#9a7d0a);color:#000}
+.form-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:6px}
+.form-sub{font-size:13px;color:#666;margin-bottom:28px}
+.demo-hint{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:14px 16px;margin-bottom:22px;font-size:12px;color:#c8a840}
+.demo-hint strong{display:block;margin-bottom:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.demo-hint code{font-family:'JetBrains Mono',monospace;color:#e8d070;font-size:11px}
+.f-label{display:block;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.15em;margin-bottom:7px}
+.f-input-wrap{position:relative;margin-bottom:18px}
+.f-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:#555}
+.f-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 14px 13px 40px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s}
+.f-input:focus{border-color:rgba(212,175,55,.4)}
+.f-input.no-icon{padding-left:14px}
+.f-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:#555;background:none;border:none;color:#777}
+.forgot-link{float:right;font-size:11px;color:var(--gold);text-decoration:none;cursor:pointer}
+.forgot-link:hover{text-decoration:underline}
+.login-submit{width:100%;padding:15px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0;font-size:11px;color:#555}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+.social-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.social-btn{padding:11px;border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:8px}
+.social-icon{width:16px;height:16px;background:rgba(255,255,255,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.back-home{display:block;text-align:center;margin-top:28px;font-size:11px;color:#555;text-decoration:none;cursor:pointer}
+.back-home:hover{color:var(--gold)}
+.success-box{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:#6ee7b7;display:none}
+.error-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:#fca5a5;display:none}
+.loading-spinner{display:none;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DASHBOARD */
+.dash-wrap{min-height:100vh;background:var(--obsidian)}
+.dash-header{background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,.05);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.dash-body{max-width:1200px;margin:0 auto;padding:36px 28px}
+.dash-greeting{margin-bottom:32px}
+.dash-greeting h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px}
+.dash-greeting p{color:#666;font-size:14px}
+.dash-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.dk-card{padding:20px;border-radius:18px}
+.dk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dk-trend{font-size:10px;padding:3px 8px;border-radius:100px}
+.dk-trend.up{background:rgba(52,211,153,.1);color:#34d399}
+.dk-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;margin-bottom:5px}
+.dk-lbl{font-size:11px;color:#666}
+.dash-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.dash-chart-card,.dash-alert-card{padding:22px;border-radius:18px}
+.dash-chart-bars{display:flex;align-items:flex-end;gap:4px;height:80px;margin-top:14px}
+.dash-chart-bar{flex:1;border-radius:3px;background:linear-gradient(to top,rgba(46,95,160,.9),rgba(52,144,220,.5));transition:.3s}
+.dash-alert-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.dash-alert-item:last-child{border-bottom:none}
+.d-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 1.5s infinite}
+.dash-modules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dash-mod{padding:18px;border-radius:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.dash-mod:hover{border-color:rgba(212,175,55,.35)!important;background:rgba(212,175,55,.03)!important}
+.dm-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.dm-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.dm-count{font-size:10px;color:#666}
+
+/* SCROLL ANIMATIONS */
+.fade-in-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.fade-in-up.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .feat-grid,.mods-grid,.pricing-grid,.testi-grid,.footer-grid{grid-template-columns:1fr 1fr}
+  .contact-grid,.dash-row{grid-template-columns:1fr}
+  .dash-kpis{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:20px}
+  .login-left{display:none}
+  .dash-modules{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .feat-grid,.mods-grid,.pricing-grid,.testi-grid,.dash-modules,.footer-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .dash-kpis{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ LANDING PAGE VIEW ════════════════════ -->
+<div id="view-landing" class="view active">
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo-mark gold">LC</div>
+      <div class="logo-text">
+        <p class="gold">LC CONSULTORIA</p>
+        <p>TelecomKPI Manager</p>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#plataforma">Plataforma</a></li>
+      <li><a href="#modulos">Módulos</a></li>
+      <li><a href="#planos">Planos</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <button class="btn-outline" style="border-radius:8px" onclick="showView('login')">Entrar</button>
+      <button class="btn-gold" style="border-radius:8px" onclick="scrollToSection('planos')">Começar Grátis</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero grid-bg">
+  <div class="hero-glow1"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Plataforma #1 em Gestão de KPIs Telecom no Brasil
+    </div>
+    <h1>
+      <span>Domine os</span><br>
+      <span class="gold-shimmer">Indicadores da sua</span><br>
+      <span>Operação Telecom</span>
+    </h1>
+    <p class="hero-sub">Consolide, monitore e reporte KPIs de rede, qualidade e negócio em tempo real. Dashboards inteligentes, alertas preditivos e conformidade ANATEL automática.</p>
+    <div class="hero-ctas">
+      <button class="btn-gold" onclick="scrollToSection('planos')">Iniciar Trial Gratuito →</button>
+      <button class="btn-outline" onclick="scrollToSection('plataforma')">Ver Demonstração</button>
+    </div>
+    <div class="trust-badges">
+      <span class="trust-badge">✓ LGPD Compliant</span>
+      <span class="trust-badge">✓ ISO 27001</span>
+      <span class="trust-badge">✓ ANATEL Ready</span>
+      <span class="trust-badge">✓ 99.9% SLA</span>
+      <span class="trust-badge">✓ Data Residency BR</span>
+    </div>
+
+    <!-- MOCKUP -->
+    <div class="mockup-wrap">
+      <div class="mockup-glow"></div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span style="background:#ff5f57"></span><span style="background:#ffbd2e"></span><span style="background:#28c840"></span>
+          </div>
+          <div class="url-bar">app.lc-telecomkpi.com.br</div>
+        </div>
+        <div class="dash-grid">
+          <div class="kpi-card">
+            <div class="kpi-top"><span style="font-size:14px">📶</span><span class="kpi-trend">+0.2%</span></div>
+            <div class="kpi-val" style="color:#34d399">99.7%</div>
+            <div class="kpi-lbl">Disponibilidade RAN</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span style="font-size:14px">📉</span><span class="kpi-trend">-0.1%</span></div>
+            <div class="kpi-val" style="color:#d4af37">0.8%</div>
+            <div class="kpi-lbl">Drop Call Rate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span style="font-size:14px">⭐</span><span class="kpi-trend">+3pts</span></div>
+            <div class="kpi-val" style="color:#60a5fa">74</div>
+            <div class="kpi-lbl">NPS Clientes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span style="font-size:14px">📈</span><span class="kpi-trend">+5.2%</span></div>
+            <div class="kpi-val" style="color:#c084fc">R$89</div>
+            <div class="kpi-lbl">ARPU Médio</div>
+          </div>
+        </div>
+        <div class="dash-bottom">
+          <div class="chart-card">
+            <div class="chart-lbl">Throughput DL/UL — Últimas 24h</div>
+            <div class="bars" id="heroChartBars"></div>
+          </div>
+          <div class="alert-card">
+            <div class="chart-lbl">⚠ Alertas Ativos</div>
+            <div class="alert-item"><span class="alert-dot" style="background:#ef4444"></span><span style="font-size:10px;color:#aaa">Site SP-042 — RSRP</span></div>
+            <div class="alert-item"><span class="alert-dot" style="background:#f59e0b"></span><span style="font-size:10px;color:#aaa">Latência >80ms RJ</span></div>
+            <div class="alert-item"><span class="alert-dot" style="background:#f59e0b"></span><span style="font-size:10px;color:#aaa">PRB >85% MG-01</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div><div class="stat-val gold" id="s1">0+</div><div class="stat-lbl">Operadoras Atendidas</div></div>
+      <div><div class="stat-val gold" id="s2">0+</div><div class="stat-lbl">KPIs Monitorados</div></div>
+      <div><div class="stat-val gold" id="s3">0%</div><div class="stat-lbl">Uptime Garantido</div></div>
+      <div><div class="stat-val gold" id="s4">0%</div><div class="stat-lbl">Redução no Reporte</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PLATFORM -->
+<section id="plataforma" style="background:#0a0a0a">
+  <div class="section-inner">
+    <div class="fade-in-up" style="text-align:center;margin-bottom:0">
+      <p class="sec-label">A Plataforma</p>
+      <h2 class="sec-title">Tudo que você precisa<br><span class="gold">em um só lugar</span></h2>
+      <p class="sec-sub" style="margin:0 auto;text-align:center">Do monitoramento em tempo real à conformidade regulatória, o TelecomKPI Manager cobre toda a sua operação.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card glass fade-in-up" style="transition-delay:.05s">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Tempo Real</div>
+        <p class="feat-desc">Dados de rede atualizados com latência inferior a 5 segundos. Conectores nativos para Ericsson, Huawei, Nokia e ZTE.</p>
+      </div>
+      <div class="feat-card glass fade-in-up" style="transition-delay:.15s">
+        <div class="feat-icon">🧠</div>
+        <div class="feat-title">IA Preditiva</div>
+        <p class="feat-desc">Forecasting automático com ARIMA e Prophet. Detecção de anomalias via ML antes que afetem o cliente.</p>
+      </div>
+      <div class="feat-card glass fade-in-up" style="transition-delay:.25s">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-title">ANATEL Pronto</div>
+        <p class="feat-desc">Templates pré-configurados para relatórios regulatórios. Conformidade automática com as Resoluções 717, 738 e 777.</p>
+      </div>
+      <div class="feat-card glass fade-in-up" style="transition-delay:.35s">
+        <div class="feat-icon">🔔</div>
+        <div class="feat-title">Alertas Inteligentes</div>
+        <p class="feat-desc">Storm suppression, correlação de eventos e escalonamento automático N1→N2→N3 com integração Teams/Slack.</p>
+      </div>
+      <div class="feat-card glass fade-in-up" style="transition-delay:.45s">
+        <div class="feat-icon">🌎</div>
+        <div class="feat-title">Visão Geográfica</div>
+        <p class="feat-desc">Mapas interativos com sobreposição de KPIs por região, município e site. Identifique hotspots em segundos.</p>
+      </div>
+      <div class="feat-card glass fade-in-up" style="transition-delay:.55s">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-title">Multi-Fonte</div>
+        <p class="feat-desc">Integração com OSS, BSS, CRM, ERP e NMS. API REST pública, SFTP, JDBC e webhooks em tempo real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modulos" style="background:#080808">
+  <div class="section-inner">
+    <div class="fade-in-up" style="text-align:center">
+      <p class="sec-label">Módulos</p>
+      <h2 class="sec-title">6 módulos especializados<br><span class="gold">para Telecom</span></h2>
+    </div>
+    <div class="mods-grid">
+      <div class="mod-card glass fade-in-up" style="transition-delay:.0s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#d4af37,#9a7d0a)">📊</div>
+        <div class="mod-name">Dashboard Executivo</div>
+        <p class="mod-desc">Widgets drag-and-drop, semáforos RAG e views por perfil de usuário</p>
+      </div>
+      <div class="mod-card glass fade-in-up" style="transition-delay:.1s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#2563eb,#1e3a8a)">📶</div>
+        <div class="mod-name">Rede Móvel & Fixa</div>
+        <p class="mod-desc">RAN, FTTH/FTTB, core, transporte e acesso</p>
+      </div>
+      <div class="mod-card glass fade-in-up" style="transition-delay:.2s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#059669,#065f46)">👥</div>
+        <div class="mod-name">Experiência do Cliente</div>
+        <p class="mod-desc">NPS, CSAT, churn, reclamações ANATEL e AHT</p>
+      </div>
+      <div class="mod-card glass fade-in-up" style="transition-delay:.3s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">💰</div>
+        <div class="mod-name">Financeiro & Comercial</div>
+        <p class="mod-desc">ARPU, MRR, CAC, LTV e ativações líquidas</p>
+      </div>
+      <div class="mod-card glass fade-in-up" style="transition-delay:.4s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#ea580c,#9a3412)">🔧</div>
+        <div class="mod-name">Field Service</div>
+        <p class="mod-desc">MTTR, MTBF, SLA, reincidência e OS por técnico</p>
+      </div>
+      <div class="mod-card glass fade-in-up" style="transition-delay:.5s">
+        <div class="mod-icon" style="background:linear-gradient(135deg,#db2777,#831843)">🎯</div>
+        <div class="mod-name">Metas & OKRs</div>
+        <p class="mod-desc">Cascateamento corporativo→regional→local</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="planos">
+  <div class="section-inner">
+    <div class="fade-in-up" style="text-align:center">
+      <p class="sec-label">Planos e Preços</p>
+      <h2 class="sec-title">Investimento que<br><span class="gold">se paga rapidamente</span></h2>
+      <p class="sec-sub" style="margin:0 auto;text-align:center">ROI médio de 340% no 1º ano. 14 dias de trial gratuito, sem cartão de crédito.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan glass fade-in-up">
+        <div class="plan-name">Starter</div>
+        <div class="plan-desc">Para ISPs regionais iniciando na gestão de KPIs</div>
+        <div class="plan-price"><span class="plan-currency">R$</span><span class="plan-amount gold">990</span><span class="plan-period">/mês</span></div>
+        <div class="plan-features">
+          <div class="plan-feature">5 usuários incluídos</div>
+          <div class="plan-feature">50 KPIs monitorados</div>
+          <div class="plan-feature">3 conectores nativos</div>
+          <div class="plan-feature">Alertas por e-mail</div>
+          <div class="plan-feature">Retenção de dados 3 meses</div>
+          <div class="plan-feature">Relatório ANATEL básico</div>
+          <div class="plan-feature">Suporte e-mail 48h</div>
+        </div>
+        <button class="plan-cta btn-outline" onclick="scrollToSection('contato')">Começar Trial Grátis</button>
+      </div>
+
+      <div class="plan plan-highlighted fade-in-up" style="transition-delay:.15s">
+        <div class="popular-tag">⭐ Mais Popular</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-desc">Para operadoras em crescimento que precisam de mais</div>
+        <div class="plan-price"><span class="plan-currency">R$</span><span class="plan-amount gold">3.490</span><span class="plan-period">/mês</span></div>
+        <div class="plan-features">
+          <div class="plan-feature">25 usuários incluídos</div>
+          <div class="plan-feature">300 KPIs monitorados</div>
+          <div class="plan-feature">15 conectores nativos</div>
+          <div class="plan-feature">Alertas multicanal + IA parcial</div>
+          <div class="plan-feature">Retenção de dados 12 meses</div>
+          <div class="plan-feature">App mobile iOS/Android</div>
+          <div class="plan-feature">Suporte chat 8h úteis</div>
+        </div>
+        <button class="plan-cta btn-gold" onclick="scrollToSection('contato')">Começar Trial Grátis</button>
+      </div>
+
+      <div class="plan glass fade-in-up" style="transition-delay:.3s">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-desc">Para grandes operadoras com demandas complexas</div>
+        <div class="plan-price"><span class="plan-currency">R$</span><span class="plan-amount gold">9.900</span><span class="plan-period">/mês</span></div>
+        <div class="plan-features">
+          <div class="plan-feature">100+ usuários</div>
+          <div class="plan-feature">KPIs ilimitados</div>
+          <div class="plan-feature">Todos os conectores</div>
+          <div class="plan-feature">IA/ML completo + RCA Wizard</div>
+          <div class="plan-feature">Retenção dados 36 meses</div>
+          <div class="plan-feature">White-label disponível</div>
+          <div class="plan-feature">Suporte 24/7 + TAM dedicado</div>
+        </div>
+        <button class="plan-cta btn-outline" onclick="scrollToSection('contato')">Falar com Comercial</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:#080808">
+  <div class="section-inner">
+    <div class="fade-in-up" style="text-align:center">
+      <p class="sec-label">Depoimentos</p>
+      <h2 class="sec-title">O que nossos clientes dizem</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card glass fade-in-up">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-text">"Reduzimos o tempo de geração de relatórios mensais de 3 dias para 20 minutos. O TelecomKPI Manager transformou nossa operação."</p>
+        <div class="testi-name">Carlos Henrique</div>
+        <div class="testi-role">Gerente de Operações — Operadora Regional SP</div>
+      </div>
+      <div class="testi-card glass fade-in-up" style="transition-delay:.15s">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-text">"A correlação automática entre eventos de rede e NPS nos permitiu identificar e resolver problemas antes que o cliente perceba."</p>
+        <div class="testi-name">Ana Claudia Santos</div>
+        <div class="testi-role">Diretora de Qualidade — ISP Nacional</div>
+      </div>
+      <div class="testi-card glass fade-in-up" style="transition-delay:.3s">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-text">"Conformidade ANATEL que antes levava semanas, hoje acontece automaticamente. Suporte excepcional da LC Consultoria."</p>
+        <div class="testi-name">Roberto Figueiredo</div>
+        <div class="testi-role">CTO — MVNO Brasília</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center" class="fade-in-up">
+      <div>
+        <p class="sec-label">Sobre Nós</p>
+        <h2 class="sec-title">LC Consultoria:<br><span class="gold">Expertise em Telecom</span></h2>
+        <p style="color:#777;line-height:1.7;margin-bottom:18px;font-size:14px">Fundada por especialistas com mais de 15 anos em operações de telecomunicações, a LC Consultoria nasceu da frustração com ferramentas genéricas que não entendem a complexidade do setor.</p>
+        <p style="color:#777;line-height:1.7;margin-bottom:28px;font-size:14px">O TelecomKPI Manager é o resultado de centenas de horas com gestores, engenheiros e analistas de operadoras brasileiras, traduzido em uma plataforma que realmente funciona para Telecom.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--gold);font-size:14px">🏆</span><span style="font-size:13px;color:#999">15+ anos de expertise em Telecom</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--gold);font-size:14px">👥</span><span style="font-size:13px;color:#999">Equipe 100% dedicada ao setor</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--gold);font-size:14px">🛡️</span><span style="font-size:13px;color:#999">Segurança e compliance nativos</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--gold);font-size:14px">📞</span><span style="font-size:13px;color:#999">Suporte especializado em PT-BR</span></div>
+        </div>
+      </div>
+      <div class="glass" style="padding:28px;border-radius:20px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+          <div class="logo-mark gold" style="width:48px;height:48px;border-radius:14px;font-size:16px">LC</div>
+          <div><div class="gold" style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700">LC Consultoria</div><div style="font-size:10px;color:#555">TelecomKPI Manager</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px"><span style="color:#666">Escritório</span><span style="color:#ccc">São Paulo, Brasil</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px"><span style="color:#666">Fundação</span><span style="color:#ccc">2018</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px"><span style="color:#666">Clientes Ativos</span><span style="color:#ccc">500+ operadoras</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px"><span style="color:#666">KPIs Gerenciados</span><span style="color:#ccc">10.000+</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px"><span style="color:#666">Uptime</span><span style="color:#34d399">99.9% garantido</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner fade-in-up">
+    <h2>14 dias grátis.<br><span class="gold-shimmer">Sem compromisso.</span></h2>
+    <p>Configure seu primeiro dashboard em menos de 2 horas. Suporte de onboarding incluído.</p>
+    <div class="cta-btns">
+      <button class="btn-gold" onclick="scrollToSection('contato')">Criar Conta Gratuita</button>
+      <button class="btn-outline" onclick="scrollToSection('contato')">Falar com Especialista</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contato" style="background:#070707">
+  <div class="section-inner">
+    <div class="fade-in-up" style="text-align:center">
+      <p class="sec-label">Contato</p>
+      <h2 class="sec-title">Pronto para transformar<br><span class="gold">sua operação?</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="fade-in-up" id="contactForm">
+        <div id="successMsg" class="success-box">✓ Mensagem enviada! Entraremos em contato em até 24 horas úteis.</div>
+        <div class="form-row">
+          <div class="form-field"><label>Nome Completo</label><input type="text" placeholder="Seu nome"/></div>
+          <div class="form-field"><label>E-mail Corporativo</label><input type="email" placeholder="seu@email.com.br"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><label>Empresa / Operadora</label><input type="text" placeholder="Nome da empresa"/></div>
+          <div class="form-field"><label>Telefone</label><input type="text" placeholder="+55 (11) 9 9999-9999"/></div>
+        </div>
+        <div class="form-field"><label>Mensagem</label><textarea placeholder="Como podemos ajudar?"></textarea></div>
+        <button class="btn-gold" style="width:100%;padding:16px;border-radius:12px;font-size:12px;letter-spacing:.1em;text-transform:uppercase" onclick="sendForm()">Enviar Mensagem →</button>
+      </div>
+      <div>
+        <div class="contact-info-card glass fade-in-up" style="transition-delay:.1s">
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-label">E-mail</div><div class="ci-val">contato@lcconsultoria.com.br</div></div>
+        </div>
+        <div class="contact-info-card glass fade-in-up" style="transition-delay:.2s">
+          <div class="ci-icon">📞</div>
+          <div><div class="ci-label">Telefone</div><div class="ci-val">+55 (11) 9 9999-9999</div></div>
+        </div>
+        <div class="contact-info-card glass fade-in-up" style="transition-delay:.3s">
+          <div class="ci-icon">🌐</div>
+          <div><div class="ci-label">Website</div><div class="ci-val">www.lcconsultoria.com.br</div></div>
+        </div>
+        <div class="glass fade-in-up" style="padding:20px;border-radius:16px;transition-delay:.4s">
+          <p style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin-bottom:8px">Horário de Atendimento</p>
+          <p style="font-size:13px;color:#777">Segunda a Sexta: 08h às 18h</p>
+          <p style="font-size:13px;color:#777">Suporte Enterprise: 24/7</p>
+          <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:14px 0"></div>
+          <p style="font-size:11px;color:#555">Resposta garantida em até <span style="color:var(--gold)">24 horas úteis</span> para todos os planos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="logo-mark gold" style="width:32px;height:32px;font-size:11px">LC</div>
+          <div class="logo-text"><p class="gold" style="font-size:10px">LC CONSULTORIA</p><p style="font-size:7px">TELECOMKPI MANAGER</p></div>
+        </div>
+        <p style="font-size:12px;color:#444;line-height:1.6;margin-top:12px;max-width:200px">Plataforma SaaS premium para gestão de indicadores de Telecom no Brasil.</p>
+      </div>
+      <div class="footer-col"><h4>Produto</h4><ul><li><a href="#">Dashboard</a></li><li><a href="#">Módulos</a></li><li><a href="#">Integrações</a></li><li><a href="#">API Pública</a></li><li><a href="#">Mobile App</a></li></ul></div>
+      <div class="footer-col"><h4>Empresa</h4><ul><li><a href="#">Sobre Nós</a></li><li><a href="#">Carreiras</a></li><li><a href="#">Blog Telecom</a></li><li><a href="#">Parceiros</a></li><li><a href="#">Imprensa</a></li></ul></div>
+      <div class="footer-col"><h4>Suporte</h4><ul><li><a href="#">Documentação</a></li><li><a href="#">Status</a></li><li><a href="#">Central de Ajuda</a></li><li><a href="#">Termos de Uso</a></li><li><a href="#">Privacidade / LGPD</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 LC Consultoria. Todos os direitos reservados.</p>
+      <div class="status"><span class="status-dot"></span><span>Todos os sistemas operacionais</span></div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /view-landing -->
+
+
+<!-- ════════════════════ LOGIN VIEW ════════════════════ -->
+<div id="view-login" class="view">
+<div class="login-wrap">
+
+  <!-- LEFT -->
+  <div class="login-left">
+    <div class="login-left-glow"></div>
+    <div class="login-left-content">
+      <div style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="showView('landing')">
+        <div class="logo-mark gold">LC</div>
+        <div class="logo-text"><p class="gold">LC CONSULTORIA</p><p>TelecomKPI Manager</p></div>
+      </div>
+      <h1>Gestão de KPIs<br><span class="gold-shimmer">de nível enterprise</span><br>para Telecom</h1>
+      <p>Consolide indicadores de rede, qualidade e negócio em dashboards em tempo real. Conformidade ANATEL automática.</p>
+      <div class="login-features">
+        <div class="lf-item"><div class="lf-check">✓</div>Dashboard unificado com +10.000 KPIs</div>
+        <div class="lf-item"><div class="lf-check">✓</div>Alertas preditivos com IA integrada</div>
+        <div class="lf-item"><div class="lf-check">✓</div>Relatórios ANATEL em 1 clique</div>
+        <div class="lf-item"><div class="lf-check">✓</div>99,9% de uptime garantido em SLA</div>
+      </div>
+      <div class="login-kpis">
+        <div class="lkpi glass"><div class="lkpi-val" style="color:#34d399">99.7%</div><div class="lkpi-lbl">Disponibilidade</div></div>
+        <div class="lkpi glass"><div class="lkpi-val" style="color:var(--gold)">74 pts</div><div class="lkpi-lbl">NPS</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3),transparent);margin-bottom:14px"></div>
+      <p style="font-size:11px;color:#444">© 2025 LC Consultoria. Todos os direitos reservados.</p>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+
+      <!-- Tabs -->
+      <div class="tab-switcher" id="loginTabs">
+        <button class="tab-btn active" onclick="setLoginMode('login')">Entrar</button>
+        <button class="tab-btn" onclick="setLoginMode('register')">Criar Conta</button>
+      </div>
+
+      <div id="loginHeading">
+        <div class="form-title">Bem-vindo de volta</div>
+        <div class="form-sub">Acesse sua plataforma TelecomKPI</div>
+      </div>
+
+      <!-- Demo hint -->
+      <div class="demo-hint" id="demoHint">
+        <strong>🔐 Acesso Demo</strong>
+        E-mail: <code>demo@lcconsultoria.com.br</code><br>
+        Senha: <code>demo1234</code>
+      </div>
+
+      <div id="loginError" class="error-box"></div>
+      <div id="loginSuccess" class="success-box"></div>
+
+      <!-- Form -->
+      <form onsubmit="handleLogin(event)">
+        <div id="nameField" style="display:none">
+          <label class="f-label">Nome Completo</label>
+          <div class="f-input-wrap"><span class="f-icon">👤</span><input type="text" class="f-input" id="loginName" placeholder="Seu nome completo"/></div>
+        </div>
+        <label class="f-label">E-mail</label>
+        <div class="f-input-wrap"><span class="f-icon">✉️</span><input type="email" class="f-input" id="loginEmail" placeholder="seu@email.com.br" required/></div>
+        <div id="pwdBlock">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <label class="f-label" style="margin:0">Senha</label>
+            <span class="forgot-link" onclick="setLoginMode('forgot')">Esqueceu a senha?</span>
+          </div>
+          <div class="f-input-wrap"><span class="f-icon">🔒</span><input type="password" class="f-input" id="loginPwd" placeholder="••••••••" required/><button type="button" class="f-eye" onclick="togglePwd()">👁</button></div>
+        </div>
+        <div id="confirmBlock" style="display:none">
+          <label class="f-label">Confirmar Senha</label>
+          <div class="f-input-wrap"><span class="f-icon">🔒</span><input type="password" class="f-input" id="loginConfirm" placeholder="••••••••"/></div>
+        </div>
+        <div id="termsBlock" style="display:none;margin-bottom:14px;font-size:12px;color:#666">
+          Ao criar sua conta, você concorda com os <a href="#" style="color:var(--gold)">Termos de Uso</a> e a <a href="#" style="color:var(--gold)">Política de Privacidade</a>.
+        </div>
+        <button type="submit" class="btn-gold login-submit" id="loginBtn">
+          <span class="loading-spinner" id="loginSpinner"></span>
+          <span id="loginBtnText">→ Entrar na Plataforma</span>
+        </button>
+      </form>
+
+      <div id="socialBlock">
+        <div class="divider">ou continue com</div>
+        <div class="social-btns">
+          <button class="btn-outline social-btn" onclick="socialLogin('Microsoft')"><div class="social-icon">M</div>Microsoft</button>
+          <button class="btn-outline social-btn" onclick="socialLogin('Google')"><div class="social-icon">G</div>Google</button>
+        </div>
+      </div>
+
+      <a class="back-home" onclick="showView('landing')">← Voltar para o site</a>
+    </div>
+  </div>
+</div>
+</div><!-- /view-login -->
+
+
+<!-- ════════════════════ DASHBOARD VIEW ════════════════════ -->
+<div id="view-dashboard" class="view">
+<div class="dash-wrap">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo-mark gold" style="width:34px;height:34px;font-size:12px">LC</div>
+      <span class="gold" style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;letter-spacing:.15em">TelecomKPI Manager</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <button style="background:none;border:none;cursor:pointer;font-size:18px;position:relative" title="Alertas">
+        🔔<span style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:#ef4444;border-radius:50%"></span>
+      </button>
+      <button style="background:none;border:none;cursor:pointer;font-size:16px" title="Configurações">⚙️</button>
+      <button class="btn-outline" style="padding:6px 14px;border-radius:8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase" onclick="showView('landing')">⬅ Sair</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="dash-greeting">
+      <h1>Bom dia, Demo 👋</h1>
+      <p>Aqui está o resumo da sua operação hoje — <span id="dashDate"></span></p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="dash-kpis">
+      <div class="dk-card glass">
+        <div class="dk-top"><span style="font-size:18px">📶</span><span class="dk-trend up">+0.2%</span></div>
+        <div class="dk-val" style="color:#34d399">99.7%</div>
+        <div class="dk-lbl">Disponibilidade RAN</div>
+      </div>
+      <div class="dk-card glass">
+        <div class="dk-top"><span style="font-size:18px">📉</span><span class="dk-trend up">-0.1%</span></div>
+        <div class="dk-val" style="color:var(--gold)">0.8%</div>
+        <div class="dk-lbl">Drop Call Rate</div>
+      </div>
+      <div class="dk-card glass">
+        <div class="dk-top"><span style="font-size:18px">⭐</span><span class="dk-trend up">+3pts</span></div>
+        <div class="dk-val" style="color:#60a5fa">74</div>
+        <div class="dk-lbl">NPS Clientes</div>
+      </div>
+      <div class="dk-card glass">
+        <div class="dk-top"><span style="font-size:18px">📈</span><span class="dk-trend up">+5.2%</span></div>
+        <div class="dk-val" style="color:#c084fc">R$89</div>
+        <div class="dk-lbl">ARPU Médio</div>
+      </div>
+    </div>
+
+    <!-- Chart + Alerts -->
+    <div class="dash-row">
+      <div class="dash-chart-card glass">
+        <p style="font-size:12px;color:#666;margin-bottom:4px">Throughput DL/UL — Últimas 24h (Mbps)</p>
+        <div class="dash-chart-bars" id="dashChartBars"></div>
+      </div>
+      <div class="dash-alert-card glass">
+        <p style="font-size:12px;color:#666;margin-bottom:14px">⚠️ Alertas Ativos (3)</p>
+        <div class="dash-alert-item"><span class="d-dot" style="background:#ef4444"></span><div><div style="font-size:12px">Site SP-042 — RSRP Baixo</div><div style="font-size:10px;color:#555">Há 12 min</div></div></div>
+        <div class="dash-alert-item"><span class="d-dot" style="background:#f59e0b"></span><div><div style="font-size:12px">Latência >80ms RJ-Norte</div><div style="font-size:10px;color:#555">Há 28 min</div></div></div>
+        <div class="dash-alert-item"><span class="d-dot" style="background:#f59e0b"></span><div><div style="font-size:12px">PRB Utilização >85% MG</div><div style="font-size:10px;color:#555">Há 45 min</div></div></div>
+      </div>
+    </div>
+
+    <!-- Modules -->
+    <p style="font-size:12px;color:#666;margin-bottom:16px;text-transform:uppercase;letter-spacing:.15em">Módulos Disponíveis</p>
+    <div class="dash-modules">
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#d4af37,#9a7d0a)">📊</div><div><div class="dm-name">Dashboard Executivo</div><div class="dm-count">24 KPIs ativos</div></div></div>
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#2563eb,#1e3a8a)">📶</div><div><div class="dm-name">Rede Móvel & Fixa</div><div class="dm-count">156 indicadores</div></div></div>
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#059669,#065f46)">👥</div><div><div class="dm-name">Experiência do Cliente</div><div class="dm-count">8 métricas CX</div></div></div>
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">💰</div><div><div class="dm-name">Financeiro & Comercial</div><div class="dm-count">12 KPIs BSS</div></div></div>
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#ea580c,#9a3412)">🔧</div><div><div class="dm-name">Field Service</div><div class="dm-count">MTTR: 2.4h</div></div></div>
+      <div class="dash-mod glass"><div class="dm-icon" style="background:linear-gradient(135deg,#db2777,#831843)">🎯</div><div><div class="dm-name">Metas & OKRs</div><div class="dm-count">87% atingido</div></div></div>
+    </div>
+  </div>
+</div>
+</div><!-- /view-dashboard -->
+
+
+<script>
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{
+  const n=document.getElementById('navbar');
+  if(n) n.classList.toggle('scrolled',window.scrollY>50);
+});
+
+// ── CHART BARS ──
+function makeBars(containerId,count,color1,color2){
+  const c=document.getElementById(containerId);
+  if(!c)return;
+  const vals=[65,72,58,80,75,90,88,70,65,78,85,92,88,75,70,65,80,88,92,85,78,90,95,88];
+  c.innerHTML='';
+  const n=Math.min(count,vals.length);
+  for(let i=0;i<n;i++){
+    const b=document.createElement('div');
+    b.className='bar';
+    b.style.height=vals[i]+'%';
+    b.style.background=`linear-gradient(to top,${color1},${color2})`;
+    c.appendChild(b);
+  }
+}
+makeBars('heroChartBars',24,'rgba(46,95,160,.9)','rgba(52,144,220,.4)');
+makeBars('dashChartBars',24,'rgba(46,95,160,.9)','rgba(52,144,220,.4)');
+
+// ── STATS COUNTER ──
+function animateCounter(el,target,suffix,decimals=0){
+  let start=0;
+  const step=target/80;
+  const t=setInterval(()=>{
+    start=Math.min(start+step,target);
+    el.textContent=(decimals?start.toFixed(1):Math.floor(start)).toLocaleString('pt-BR')+suffix;
+    if(start>=target)clearInterval(t);
+  },20);
+}
+const statsObs=new IntersectionObserver(([e])=>{
+  if(e.isIntersecting){
+    animateCounter(document.getElementById('s1'),500,'+');
+    animateCounter(document.getElementById('s2'),10000,'+');
+    animateCounter(document.getElementById('s3'),99.9,'%',1);
+    animateCounter(document.getElementById('s4'),80,'%');
+    statsObs.disconnect();
+  }
+},{threshold:.3});
+const sb=document.getElementById('statsBar');
+if(sb)statsObs.observe(sb);
+
+// ── SCROLL ANIMATIONS ──
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.1});
+document.querySelectorAll('.fade-in-up').forEach(el=>io.observe(el));
+
+// ── SCROLL TO SECTION ──
+function scrollToSection(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+}
+
+// ── VIEW SWITCHER ──
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='dashboard'){
+    const d=new Date();
+    const el=document.getElementById('dashDate');
+    if(el) el.textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  }
+}
+
+// ── CONTACT FORM ──
+function sendForm(){
+  const msg=document.getElementById('successMsg');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',4000);}
+}
+
+// ── LOGIN MODES ──
+let loginMode='login';
+function setLoginMode(mode){
+  loginMode=mode;
+  const tabs=document.querySelectorAll('.tab-btn');
+  const h=document.getElementById('loginHeading');
+  const demo=document.getElementById('demoHint');
+  const nameF=document.getElementById('nameField');
+  const pwdB=document.getElementById('pwdBlock');
+  const confB=document.getElementById('confirmBlock');
+  const termsB=document.getElementById('termsBlock');
+  const socialB=document.getElementById('socialBlock');
+  const tabsEl=document.getElementById('loginTabs');
+  const btnText=document.getElementById('loginBtnText');
+  const errBox=document.getElementById('loginError');
+  const sucBox=document.getElementById('loginSuccess');
+  errBox.style.display='none'; sucBox.style.display='none';
+
+  if(mode==='login'){
+    tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+    tabsEl.style.display='flex';
+    h.querySelector('.form-title').textContent='Bem-vindo de volta';
+    h.querySelector('.form-sub').textContent='Acesse sua plataforma TelecomKPI';
+    demo.style.display='block';
+    nameF.style.display='none'; pwdB.style.display='block';
+    confB.style.display='none'; termsB.style.display='none';
+    socialB.style.display='block';
+    btnText.textContent='→ Entrar na Plataforma';
+  } else if(mode==='register'){
+    tabs[1].classList.add('active'); tabs[0].classList.remove('active');
+    tabsEl.style.display='flex';
+    h.querySelector('.form-title').textContent='Criar sua conta';
+    h.querySelector('.form-sub').textContent='14 dias gratuitos, sem cartão de crédito';
+    demo.style.display='none';
+    nameF.style.display='block'; pwdB.style.display='block';
+    confB.style.display='block'; termsB.style.display='block';
+    socialB.style.display='block';
+    btnText.textContent='✓ Criar Minha Conta';
+  } else if(mode==='forgot'){
+    tabsEl.style.display='none';
+    h.querySelector('.form-title').textContent='Recuperar senha';
+    h.querySelector('.form-sub').textContent='Enviaremos um link para seu e-mail';
+    demo.style.display='none';
+    nameF.style.display='none'; pwdB.style.display='none';
+    confB.style.display='none'; termsB.style.display='none';
+    socialB.style.display='none';
+    btnText.textContent='✉️ Enviar Link de Recuperação';
+  }
+}
+
+function togglePwd(){
+  const input=document.getElementById('loginPwd');
+  input.type=input.type==='password'?'text':'password';
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('loginEmail').value;
+  const pwd=document.getElementById('loginPwd')?.value||'';
+  const confirm=document.getElementById('loginConfirm')?.value||'';
+  const errBox=document.getElementById('loginError');
+  const sucBox=document.getElementById('loginSuccess');
+  const spinner=document.getElementById('loginSpinner');
+  const btnText=document.getElementById('loginBtnText');
+  errBox.style.display='none'; sucBox.style.display='none';
+  spinner.style.display='block'; btnText.style.display='none';
+  await new Promise(r=>setTimeout(r,1400));
+  spinner.style.display='none'; btnText.style.display='inline';
+
+  if(loginMode==='login'){
+    if(email==='demo@lcconsultoria.com.br'&&pwd==='demo1234'){
+      sucBox.textContent='✓ Login realizado! Redirecionando...';
+      sucBox.style.display='block';
+      setTimeout(()=>showView('dashboard'),1200);
+    } else {
+      errBox.textContent='⚠ E-mail ou senha inválidos. Use o acesso demo acima.';
+      errBox.style.display='block';
+    }
+  } else if(loginMode==='register'){
+    if(pwd!==confirm){
+      errBox.textContent='⚠ As senhas não coincidem.';
+      errBox.style.display='block';
+    } else if(pwd.length<8){
+      errBox.textContent='⚠ A senha deve ter pelo menos 8 caracteres.';
+      errBox.style.display='block';
+    } else {
+      sucBox.textContent='✓ Conta criada! Verifique seu e-mail para ativar o acesso.';
+      sucBox.style.display='block';
+    }
+  } else {
+    sucBox.textContent='✓ Link de recuperação enviado para '+email;
+    sucBox.style.display='block';
+  }
+}
+
+function socialLogin(provider){
+  const errBox=document.getElementById('loginError');
+  errBox.textContent='🔒 SSO com '+provider+' disponível no plano Enterprise.';
+  errBox.style.display='block';
+}
+</script>
+</body>
+</html>
